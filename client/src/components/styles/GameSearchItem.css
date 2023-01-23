@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+.item-container {
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-self: stretch;
+}
+
+.item-description {
+    display: flex;
+    margin-left: 10px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.item-heading {
+    color: black;
+    font-size: 45px;
+}
+
+.item-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-self: stretch;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    /* column 'value stacks the flex items vertically (from top to bottom)' | row 'horizontally' | column-reverse | row-reverse */
+    flex-wrap: wrap;
+    /* wrap | nowrap | wrap-reverse*/
+    flex-flow: column wrap;
+    /* shorthand for direction and wrap together */
+    justify-content: flex-end;
+    /* center | flex-start | flex-end | space-around | space-between */
+    /* when flex direction is row    -->   horizontal alignnment */
+    /* when flex direction is column -->   vertical alignment */
+    align-items: flex-start;
+    /* flex-start | center | flex-end | stretch | baseline 'aligned by text position' */
+    /* when flex direction is row    -->   vertical alignment */
+    /* when flex direction is column -->   horizontal alignment */
+    align-content: flex-start;
+    /* space-between | space-around | stretch | center | flex-start | flex-end*/
+    /* property is used to align the flex lines */
+    ;
+}
+
+.flex-item {
+    order: 0;
+    flex-grow: 0;
+    /* 'specifies how much a flex item will grow relative to the rest of the flex items' */
+    flex-shrink: 1;
+    /* 'specifies how much a flex item will shrink relative to the rest of the flex items' */
+    flex-basis: 200px;
+    /* 'specifies the initial length of a flex item' */
+    flex: 0 0 200px;
+    /* 'shorthand property for the flex-grow, flex-shrink, and flex-basis properties' */
+    align-self: center;
+    /* center | flex-start | flex-end 'specifies the alignment for the selected item inside the flexible container overriding the inherited one' */
+}
