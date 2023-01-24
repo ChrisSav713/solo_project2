@@ -1,25 +1,22 @@
 import React, { useEffect } from 'react'
 import {Button, Form, Container, Col, Row, FormGroup} from 'react-bootstrap'
 import './styles/GameSearchItem.css'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass, faPenToSquare, faWater} from '@fortawesome/free-solid-svg-icons'
 const GameSearchItem = (props) => {
     
-    const { characters, covers, genres, platforms } = props
+    const { genres, cover, id, name, platforms, screenshots, summary, tags, url } = props
     
-    useEffsect (() => {
-        
-    }, [])
-
     return (
         <div className="item-container">
             <img
                 alt="cover art"
-                src={covers[0]}
+                //src={}
                 width="150px"
                 height="150px"
             />
             <div className="item-description">
-                <span className="item-heading">{pirate.name}</span>
+                <span className="item-heading">{}</span>
                 <div className="item-buttons">
                     <Button 
                         variant="primary"

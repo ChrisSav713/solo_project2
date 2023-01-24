@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import {Button, FormGroup, Form, Container, Col, Row} from 'react-bootstrap'
 import axios from 'axios'
+import GameDetail from './GameDetail'
+import GameSearchItem from './GameSearchItem'
 
 const LoginRes = () => {
     const [accessToken, setAccessToken] = useState({})
+    const [gameData, setGameData] = useState([{}])
 
     let getTokenPost = {
         method:'post',
@@ -46,6 +49,7 @@ const LoginRes = () => {
         const token = JSON.parse(sessionStorage.getItem("accessToken"))
         if(token) {
             console.log('token exists')
+            setAccessToken(token)
         } else {
             console.log('No token')
             getToken()
@@ -55,25 +59,32 @@ const LoginRes = () => {
     const generateApiRequest = () => {
         document.getElementById("text1").value = JSON.stringify(getTokenPost)
         apiSearchPost.headers.Authorization = 'Bearer ' + accessToken.access_token
-        document.getElementById("text2").value = "Access Token " + accessToken.access_token + " \nExpires In " + accessToken.expires_in + " \n Token Type" + accessToken.token_type        
+        document.getElementById("text2").value = "Access Token " + accessToken.access_token + " \nExpires In " + accessToken.expires_in + "\nToken Type " + accessToken.token_type        
         document.getElementById("text3").value = JSON.stringify(apiSearchPost)
     }
 
     const sendApiRequest = async () => {
         console.log('sending api request')
         const searchOptions = { 
-            token:accessToken.access_token, 
+            token: accessToken.access_token,
             endpoint:'/games', 
-            fields:'*', 
+            fields:['id', 'name', 'cover.url', 'artworks.url', 'genres.name', 'storyline', 'summary', 
+            'screenshots.url', 'platforms.name', 
+            'platforms.platform_logo.url', 'tags', 'rating', 'url'],
             search: null, 
             where: null, 
             limit:'10', 
             offset:'10', 
             sort: null
         }
-        const response = await axios.post('http://localhost:8000/api/user/comefindme',{searchOptions:searchOptions})
-        
-        console.log(response.data)
+        console.log(searchOptions);
+        await axios.post('http://localhost:8000/api/user/comefindme',{searchOptions:searchOptions})
+        .then(res => {
+        console.log('api finished');
+        console.log(res.data);
+        setGameData(res.data)
+        }).catch(err => console.log(err))
+        .finally()
         //console.log(apiSearchPost)
         //axios(apiSearchPost).then(res => console.log(res.data).catch(err => console.log(res.data)))
     }
@@ -99,6 +110,13 @@ const LoginRes = () => {
                 <Form.Label>Label 4</Form.Label>
                 <Form.Control as="textarea" id="text4" rows={5} />
             </Form.Group>
+            <ul>
+            {
+            gameData?.map(item => (
+                <GameSearchItem key={item.id} props={item}></GameSearchItem>
+            ))
+            }
+            </ul>
         </div>
     )
 }

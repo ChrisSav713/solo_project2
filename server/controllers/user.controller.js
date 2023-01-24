@@ -18,7 +18,8 @@ module.exports.getAll = (req, res) => {
 }
 
 module.exports.comefindme = async (req, res) => {
-    console.log(req.body)
+    console.log('server side api request')
+    console.log(req.body.searchOptions)
     const {token, endpoint, fields, search, where, limit, offset, sort } = req.body.searchOptions
     let requestOptions = {
         method: 'POST',
@@ -36,6 +37,7 @@ module.exports.comefindme = async (req, res) => {
             `sort ${sort};`
         ]
     }
+    console.log('Request Options')
     console.log(requestOptions)
     
     const result = await fetch(`https://api.igdb.com/v4${endpoint}`,  requestOptions)
@@ -47,6 +49,8 @@ module.exports.comefindme = async (req, res) => {
     .then(data => { return (data) })
     .catch(err => console.warn(err));
     
+    console.log('fetch finished, returning data to client')
+    console.log(result)
     res.status(200).send(result)
     }
     
