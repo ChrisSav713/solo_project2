@@ -1,10 +1,15 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useContext, useState} from 'react'
 import {Button, FormGroup, Form, Container, Col, Row} from 'react-bootstrap'
 import axios from 'axios'
 import GameDetail from './GameDetail'
 import GameSearchItem from './GameSearchItem'
+import { useNavigate } from 'react-router-dom'
+import { GameContext } from '../App'
 
 const LoginRes = () => {
+    const navigate = useNavigate()
+    const { gameSession, setGameSession } = useContext(GameContext)
+
     const [accessToken, setAccessToken] = useState({})
     const [gameData, setGameData] = useState([{}])
 
@@ -63,6 +68,12 @@ const LoginRes = () => {
         document.getElementById("text3").value = JSON.stringify(apiSearchPost)
     }
 
+    const goDetail = () => {
+        console.log('todetail')
+        console.log(gameSession.game)
+        navigate('/gameDetail')
+    }
+
     const sendApiRequest = async () => {
         console.log('sending api request')
         const searchOptions = { 
@@ -83,6 +94,12 @@ const LoginRes = () => {
         console.log('api finished');
         console.log(res.data);
         setGameData(res.data)
+        setGameSession((prev) => {
+            return {
+                ...prev,
+                game:res.data[1],
+            }
+        })
         }).catch(err => console.log(err))
         .finally()
         //console.log(apiSearchPost)
@@ -94,6 +111,7 @@ const LoginRes = () => {
             <Button onClick={checkForToken}>Check For Token</Button>
             <Button onClick={generateApiRequest}>Generate Api Request</Button>
             <Button onClick={sendApiRequest}>Send API Request</Button>
+            <Button onClick={goDetail}>Go {gameSession.greeting}</Button>
             <Form.Group className="mb-3">
                 <Form.Label>Label 1</Form.Label>
                 <Form.Control as="textarea" id="text1" rows={5} />
@@ -110,13 +128,11 @@ const LoginRes = () => {
                 <Form.Label>Label 4</Form.Label>
                 <Form.Control as="textarea" id="text4" rows={5} />
             </Form.Group>
-            <ul>
-            {
-            gameData?.map(item => (
-                <GameSearchItem key={item.id} props={item}></GameSearchItem>
-            ))
-            }
-            </ul>
+                {gameData.length > 0 && 
+                    gameData.map((item) => {
+                        return <GameSearchItem key={item.id} game={item}></GameSearchItem>
+                    })
+                }
         </div>
     )
 }

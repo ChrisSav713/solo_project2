@@ -2,14 +2,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
 
 const UserSchema = new mongoose.Schema({
-    first:{
+    username:{
         type:String,
-        required: [true, 'First name must be included'],
+        required:[false]
+    },
+    firstname:{
+        type:String,
+        required: [false, 'First name must be included'],
         minLength: [3, 'User - First name must be at least 3 characters']
     },
-    last: {
+    lastname: {
         type:String,
-        required: [true, 'Last name must be included'],
+        required: [false, 'Last name must be included'],
         minLength: [3, , 'User - Last name must be at least 3 characters']
     },
     email: {
@@ -18,7 +22,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Email must be included'],
         unique:true,
         match: [
-            /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
             'User - Not a valid Email format'
         ]
     },
@@ -28,9 +32,21 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Password must be included'],
         minLength: [8, 'Password must be at least 8 characters'],
         match:[
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/,
             'User - Password must contian at least 1 uppercase, 1 lowercase, and 1 number and special character'
         ]
+    },
+    location:{
+        type:String,
+        required:[false]
+    },
+    bio:{
+        type:String,
+        required:[false]
+    },
+    avatar:{
+        type:String,
+        required:[false]
     }
 }, {timestamps:true})
 

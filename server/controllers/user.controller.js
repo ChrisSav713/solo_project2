@@ -1,6 +1,46 @@
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 
+module.exports.login = async (req, res) => {
+    var isError = false
+    var messageBack = {
+        "name":"ValidationError",
+        "message":"Validation Failed",
+        "errors":{}
+    }
+    var findUser = {}
+
+    findUser = await User.findOne({"email":req.body.email})
+
+    if(!findUser) {
+        isError = true
+        console.log("Email address not found")
+        messageBack["errors"]["email"] = {
+            "name":"ValidationError", 
+            "message":"Email address not found"
+        }
+    } else {
+        let match = await bcrypt.compare(req.body.password, findUser.password)
+
+        if(!match) {
+            isError = true
+            messageBack["errors"]["password"] = {
+                "name":"ValidationError", 
+                "message":"Password is invalid"
+            }
+        }
+    }
+    
+    if(isError) {
+        console.log("Returning error messages")
+        res.status(200).json(messageBack)
+    }
+    else {
+        console.log("Login Success")
+        res.status(200).send('Login Success')
+    }
+}
+
 module.exports.getOne = (req, res) => {
     User.findOne({_id:req.params.id})
         .then(item => res.json(item))
@@ -15,6 +55,19 @@ module.exports.getAll = (req, res) => {
             return res.json(items)
         }
     })
+}
+
+
+module.exports.createOne = (req, res) => {
+
+    console.log('createOne Launched')
+        const user = {email:req.body.email, password:req.body.password}
+        console.log(user)
+        console.log('creating')
+        User.create(user)
+            .then((item) => res.json(item))
+            .catch((err) => res.json(err))
+
 }
 
 module.exports.comefindme = async (req, res) => {
@@ -67,8 +120,8 @@ module.exports.deleteOne = (req, res) => {
     .catch(err => res.json(err))
 }
 
-async function checkExists(fieldIn, valueIn) {
-    const exists = await User.exists({[fieldIn]: valueIn})
+function checkExists(fieldIn, valueIn) {
+    const exists = User.exists({[fieldIn]: valueIn})
     console.log([fieldIn + valueIn])
     if(exists !== null) {
         console.log(JSON.stringify(exists))
@@ -78,64 +131,5 @@ async function checkExists(fieldIn, valueIn) {
     else {
         console.log(JSON.stringify(exists))
         return false  
-    } 
-}
-
-module.exports.createOne = async (req, res) => {
-
-        const user = {first: req.body.first, last: req.body.last, email: req.body.email, password: req.body.password}
-        console.log(user)
-        User.create(user)
-            .then((item) => res.json(item))
-            .catch((err) => res.json(err))
-
-}
-
-module.exports.login = async (req, res) => {
-
-    var isError = false
-    var messageBack = {
-        "name":"ValidationError",
-        "message":"Validation Failed",
-        "errors":{}
     }
-    var findUser = {}
-
-    if(req.body.loginPassword !== req.body.loginConfirm) {
-        isError = true
-        console.log("don't match")
-        messageBack["errors"]["loginConfirm"] = {
-            "name":"ValidationError", 
-            "message":"Password and confirmation do not match"
-        }
-    } else {
-        findUser = await User.findOne({"email":req.body.loginEmail})
-        if(!findUser) {
-            isError = true
-            console.log("Email address not found")
-            messageBack["errors"]["loginEmail"] = {
-                "name":"ValidationError", 
-                "message":"Email address not found"
-            }
-        }else{
-            let match = await bcrypt.compare(req.body.loginPassword, findUser.password)
-
-            if(!match)
-                isError = true
-                messageBack["errors"]["loginPassword"] = {
-                    "name":"ValidationError", 
-                    "message":"Password is invalid"
-                }
-            }
-        }
-    
-    if(isError) {
-        console.log("Returning error messages")
-        res.status(200).json(messageBack)
-    }
-    else {
-        console.log("Login Success")
-        res.status(200).send('Login Success')
-    }
-
 }
